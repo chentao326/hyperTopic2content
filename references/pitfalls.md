@@ -146,6 +146,55 @@ edge-tts --voice zh-CN-YunjianNeural --text "你好" --write-media out.mp3
 | 飞书知识库 | 依赖 lark-cli 配置 | 确认 lark-cli --as user 可用 |
 | Chrome headless PDF 渲染 | 脚本找不到浏览器 | macOS 自带 Chrome：`/Applications/Google Chrome.app/Contents/MacOS/Google Chrome` |
 
+## Phase 4b MP4 视频：Chrome headless 截图方案（2026-06-25 种子法则实战验证）
+
+**PIL 生成的纯文字帧太简陋，用户不满意"视觉效果都没有"。必须用 Chrome headless 渲染真 HTML 帧。**
+
+### Chrome headless 三步骤
+
+1. 写一个 kraft-paper 风格的单文件 HTML 模板（含 JS 渲染逻辑），用 `STEP_DATA_PLACEHOLDER` 占位
+2. Python 脚本：替换占位符 → 生成每步独立 HTML → Python http.server 托管 → Chrome headless 逐帧截图
+3. ffmpeg 每帧 + 对应音频 → 拼接 TS → concat → 最终 MP4
+
+```python
+CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+for i, seg in enumerate(segments):
+    subprocess.run([
+        CHROME, "--headless", "--disable-gpu",
+        "--window-size=1920,1080", "--hide-scrollbars",
+        f"--screenshot={out}", f"http://127.0.0.1:{PORT}/step_{i}.html?step={i}"
+    ], capture_output=True, timeout=15)
+```
+
+关键：app.use(express.static(...))
+
+### HTML 模板设计要点
+
+- 固定 1920×1080，overflow:hidden
+- kraft-paper 配色：bg `#dccab0`，card `#eedfc7`，text `#2a1e13`，accent `#a35b2a`
+- 每章独立颜色（d4a373/a7c957/b5838d/e5989b/6b705c/7f5539/5a6d60）
+- 顶部色条 + 章节标签 + 步数 pill + 大标题 + 装饰线 + 正文
+- 视觉卡片按章节类型：三图标/三福田卡/对比框/清单/前后对比/结尾星标
+- 底部进度条 + 章节指示点
+
+### 避免了什么坑
+
+| ❌ | ✅ |
+|----|-----|
+| PIL draw.text 生成帧 | Chrome headless 渲染真 HTML |
+| 网页演示 React 项目做视频 | 提取视觉设计到单文件 HTML 模板 |
+| Playwright/greenlet 模块冲突 | 直接用 Chrome CLI --headless --screenshot |
+| 在 dist 的 React SPA 上截图 | 每步独立 HTML 文件，/?step=N 参数控制 |
+
+## 网页演示脚手架常见坑（新增）
+
+| 坑 | 症状 | 修复 |
+|----|------|------|
+| scaffold.sh 路径含空格 | `cd /Volumes/My SSD/...` → No such file | cd /tmp && scaffold.sh zp（简短路径），然后 mv 到目标 |
+| 脚本批量生成 CSS 崩 | f-string 里 `{s}` 被解析为 Python 变量 | 双花括号 `{{}}` 转义 JSX 花括号 |
+| chapters.ts 导入丢失 | patch 替换时删了 import 行 | 改完后 read_file 检查所有 import |
+| extract-narrations 报错 | “must export an array named narrations” | narrations.ts 必须用 `export const narrations`（命名导出），不能用 export default |
+
 ## Phase 4b MP4 视频（新增，来自 text-to-video-pipeline）
 
 | 坑 | 症状 | 修复 |

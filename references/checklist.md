@@ -126,9 +126,9 @@
 ## Phase 4b (B2 MP4 视频，新增)
 
 ### Step A: 口播稿
-- [ ] script.md 产出并同步到 script_full.txt
-- [ ] outline.md 产出，包含信息池 + 素材清单 + step 估时
-- [ ] 短视频 script_full.txt 120-220 字；完整版 300-600 字（B 站风格，禁用词清零）
+- [ ] 单一版本：script.md / script_full.txt / outline.md 已产出；全都要：short/full 两套脚本已产出
+- [ ] outline 文件产出，包含信息池 + 素材清单 + step 估时
+- [ ] script_full.txt 符合目标版本字数：短视频 120-220 字；完整版 300-600 字（B 站风格，禁用词清零）
 - [ ] 开头有钩子，结尾有收尾，中间有数据
 
 ### Step B: TTS 试听
@@ -136,9 +136,9 @@
 - [ ] 每段 ~10 秒，无截断
 - [ ] AI 推荐附上
 
-### Step C: 层面选择
+### Step C: 视觉一致选择
 - [ ] 层面 2 是否 → 已选择
-- [ ] 层面 3 版本 → 已选择
+- [ ] MP4 目标版本已在 Step A 开始时确定，且 prompt 只生成对应版本
 
 ### Step D: DESIGN.md
 - [ ] 视觉 token 提取（层面 2=是时）或基础规则推断（否时）
@@ -147,11 +147,15 @@
 ### Step E: 正式 TTS + 字幕
 - [ ] mimo 或 edge-tts 正式合成全程音频
 - [ ] audio.mp3 可被 ffprobe 识别（MP3 / 128k 左右 / 时长正确）；如保留 WAV，才检查 24kHz PCM16 mono
+- [ ] duration.json 已由 ffprobe 生成，duration 为正数
 - [ ] whisper 转字幕 JSON 词数 >50（正常 100-200 词）
 
 ### Step G: MP4 输出
 - [ ] HyperFrames lint 0 error
 - [ ] inspect 0 layout issue
+- [ ] index.html 无 CDN 依赖，GSAP 从本地 node_modules 加载
+- [ ] 字幕来自 transcript.json，非示例内嵌 WORDS
+- [ ] composition/audio 时长来自 duration.json，并覆盖字幕尾部误差
 - [ ] MP4 文件存在且格式正确（H.264 1920x1080 AAC）
 - [ ] MP4 时长 = 音频时长 ± 0.5s
 - [ ] 短视频版或完整版命名符合规范

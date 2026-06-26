@@ -23,22 +23,34 @@ hyperTopic2content（路由层）← 本仓库
 
 ## 前置依赖
 
-### 必需（路由到的 skill）
-| Skill | Phase | 仓库 |
-|-------|-------|------|
-| last30days-cn | Phase 1 舆情扫描 | 已装于 ~/.hermes/skills/ |
-| hv-analysis | Phase 2 横纵分析 | 已装于 ~/.hermes/skills/ |
-| khazix-writer | Phase 3 公众号（卡兹克） | 已装于 ~/.hermes/skills/ |
-| hottake-writer | Phase 3 公众号（半佛） | 已装于 ~/.hermes/skills/ |
-| topic2content | Phase 4 B1 网页演示 | 已装于 ~/.hermes/skills/ |
-| video-pipeline | Phase 4 B2 MP4 视频 | [github.com/chentao326/video-pipeline](https://github.com/chentao326/video-pipeline) |
-| beautiful-article | Phase 5 精修网页 | 已装于 ~/.hermes/skills/ |
+hyperTopic2content 是一个路由层，需要以下子 skill 才能完整运行。安装方式见 [bundled-skills/](bundled-skills/)。
 
-### 系统依赖
-- Hermes Agent
-- Python >= 3.9
-- Node.js >= 22（网页演示）
-- FFmpeg
+### 已打包在本仓库（bundled-skills/）
+
+| Skill | Phase | 说明 |
+|-------|-------|------|
+| topic2content | Phase 4 B1 网页演示 | React 项目 + 分段音频合成 |
+| hv-analysis | Phase 2 横纵分析 | 1-3万字深度报告 |
+| khazix-writer | Phase 3 公众号（卡兹克风格） | 4000-8000字长文 |
+
+### 外部获取
+
+| Skill | Phase | 获取方式 |
+|-------|-------|---------|
+| video-pipeline | Phase 4 B2 MP4 | `git clone https://github.com/chentao326/video-pipeline.git ~/.hermes/skills/software-development/video-pipeline` |
+| last30days-cn | Phase 1 舆情 | `npx skills@latest add last30days-cn -g` |
+| hottake-writer | Phase 3 半佛风格 | `npx skills@latest add hottake-writer -g` |
+| beautiful-article | Phase 5 精修网页 | `npx skills@latest add beautiful-article -g` |
+
+### 一键安装
+
+```bash
+git clone https://github.com/chentao326/hyperTopic2content.git
+cd hyperTopic2content
+cp -r bundled-skills/* ~/.hermes/skills/
+npx skills@latest add last30days-cn hottake-writer beautiful-article -g
+git clone https://github.com/chentao326/video-pipeline.git ~/.hermes/skills/software-development/video-pipeline
+```
 
 ## 使用方式
 
